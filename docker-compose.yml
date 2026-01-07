@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  aikit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aikit:latest
+    container_name: aikit
+
+    # 环境变量（方式 1：在 docker-compose.yml 中配置）
+    environment:
+      # 通义千问配置
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY:-}
+      - DASHSCOPE_BASE_URL=${DASHSCOPE_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}
+      - DASHSCOPE_MODEL_NAME=${DASHSCOPE_MODEL_NAME:-qwen-plus}
+
+      # 硅基流动配置
+      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY:-}
+      - SILICONFLOW_BASE_URL=${SILICONFLOW_BASE_URL:-https://api.siliconflow.cn/v1}
+      - SILICONFLOW_MODEL_NAME=${SILICONFLOW_MODEL_NAME:-Qwen/Qwen2.5-72B-Instruct}
+      - SILICONFLOW_EMBEDDING_MODEL=${SILICONFLOW_EMBEDDING_MODEL:-BAAI/bge-m3}
+
+    # 挂载本地代码（可选，用于开发调试）
+    # volumes:
+    #   - .:/app
+
+    # 保持容器运行，方便执行多个命令
+    tty: true
+    stdin_open: true
+
+    # 默认命令
+    command: /bin/bash
