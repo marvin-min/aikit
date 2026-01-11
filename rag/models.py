@@ -1,0 +1,30 @@
+import os
+import dotenv
+from langchain_community.embeddings import DashScopeEmbeddings
+
+dotenv.load_dotenv()
+
+from langchain_openai import ChatOpenAI
+os.environ["LANGCHAIN_VERBOSE"] = "true"
+
+DASHSCOPE_API_KEY=os.getenv("DASHSCOPE_API_KEY")
+DASHSCOPE_BASE_URL=os.getenv("DASHSCOPE_BASE_URL")
+DASHSCOPE_MODEL_NAME=os.getenv("DASHSCOPE_MODEL_NAME")
+
+def get_client(api_key=DASHSCOPE_API_KEY, base_url=DASHSCOPE_BASE_URL, model_name=DASHSCOPE_MODEL_NAME):
+  client = ChatOpenAI(api_key=api_key,
+                      base_url=base_url,
+                      model=model_name)
+  return client
+
+def get_embeddings():
+  # 向量化模型，它是 Retriever 的“眼睛”
+  return DashScopeEmbeddings(
+    model="text-embedding-v3",
+    dashscope_api_key=DASHSCOPE_API_KEY
+  )
+
+from langchain_core.globals import set_debug
+
+def debug_mode(flag=True):
+  set_debug(flag)
