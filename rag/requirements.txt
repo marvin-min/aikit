@@ -1,0 +1,14 @@
+# LangChain core stack
+langchain==1.2.3
+langchain-core
+langchain-community
+
+# LLM providers（按需保留）
+langchain-openai
+dashscope
+
+# Vector store
+chromadb
+
+# Utils
+tiktoken
