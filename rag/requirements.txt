@@ -12,3 +12,4 @@ chromadb
 
 # Utils
 tiktoken
+bs4

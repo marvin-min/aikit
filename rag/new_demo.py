@@ -1,42 +1,44 @@
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI
 import models
 
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+
+from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_core.documents import Document
 
-# 示例文档
-docs = [
-    Document(page_content="LangChain is a framework for building LLM applications."),
-    Document(page_content="RAG combines retrieval with generation."),
-    Document(page_content="Chroma is a local vector database."),
-]
-
-# embedding 模型
+# 1️⃣ 初始化模型
+client = models.get_client()
 embeddings = models.get_embeddings()
 
-# 建立向量库
+# 2️⃣ 加载文档（与旧代码一致）
+loader = WebBaseLoader(
+    web_path="https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_2a65998b79af47eaaf2115ef1ce234f9.html"
+)
+docs = loader.load()
+
+# 3️⃣ 向量库
 vectorstore = Chroma.from_documents(
     documents=docs,
     embedding=embeddings,
 )
 
-# 关键：retriever 就是从 vectorstore 来的
+# 4️⃣ retriever（和旧代码一模一样）
 retriever = vectorstore.as_retriever(
-    search_kwargs={"k": 2}
+    search_kwargs={"k": 3}
 )
-# llm = ChatOpenAI(model="gpt-4o-mini")
-client = models.get_client()
+
+# 5️⃣ 等价于 chain_type="stuff" 的 prompt
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "Use the context to answer the question.\n\n{context}"),
+    ("system", "Use the following context to answer the question.\n\n{context}"),
     ("human", "{question}")
 ])
 
-def format_docs(docs):
+# 6️⃣ 等价于 stuff 的 documents 拼接逻辑
+def format_docs(docs: list[Document]) -> str:
     return "\n\n".join(doc.page_content for doc in docs)
 
+# 7️⃣ LCEL RAG Chain（完全等价）
 rag_chain = (
     {
         "context": retriever | format_docs,
@@ -46,4 +48,9 @@ rag_chain = (
     | client
 )
 
-print(rag_chain.invoke("What is RAG?").content)
+# 8️⃣ 调用（注意：新 API 直接传字符串）
+result = rag_chain.invoke(
+    "2026年购买一个15万元的纯油车，我能获得多少补贴？"
+)
+
+print(result.content)
