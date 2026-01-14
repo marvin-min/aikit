@@ -2,6 +2,7 @@
 langchain==1.2.3
 langchain-core
 langchain-community
+dotenv
 
 # LLM providers（按需保留）
 langchain-openai
@@ -13,3 +14,13 @@ chromadb
 # Utils
 tiktoken
 bs4
+
+# jupyter notebook
+jupyterlab
+ipykernel
+ipywidgets
+
+
+# Document loaders
+docx2txt
+pypdf

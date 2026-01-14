@@ -10,7 +10,6 @@ os.environ["LANGCHAIN_VERBOSE"] = "true"
 DASHSCOPE_API_KEY=os.getenv("DASHSCOPE_API_KEY")
 DASHSCOPE_BASE_URL=os.getenv("DASHSCOPE_BASE_URL")
 DASHSCOPE_MODEL_NAME=os.getenv("DASHSCOPE_MODEL_NAME")
-DASHSCOPE_EMBEDDING_MODEL_NAME=os.getenv("DASHSCOPE_EMBEDDING_MODEL")
 
 def get_client(api_key=DASHSCOPE_API_KEY, base_url=DASHSCOPE_BASE_URL, model_name=DASHSCOPE_MODEL_NAME):
   client = ChatOpenAI(api_key=api_key,
@@ -21,7 +20,7 @@ def get_client(api_key=DASHSCOPE_API_KEY, base_url=DASHSCOPE_BASE_URL, model_nam
 def get_embeddings():
   # 向量化模型，它是 Retriever 的“眼睛”
   return DashScopeEmbeddings(
-    model=DASHSCOPE_EMBEDDING_MODEL_NAME,
+    model="text-embedding-v3",
     dashscope_api_key=DASHSCOPE_API_KEY
   )
 
